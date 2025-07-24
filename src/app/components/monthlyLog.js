@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import BulletItem from './BulletItem';
+import BulletItem from './bulletItem';
 
 
 const MonthlyLog = ({ entries, onAddEntry, onUpdateEntry, onDeleteEntry }) => {

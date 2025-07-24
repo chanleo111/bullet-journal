@@ -49,7 +49,7 @@ const CollectionLog = () => {
                 {collections.map(col => (
                     <div key={col.id} className="bg-white rounded-lg shadow p-6 relative">
                         <h3 className="font-semibold text-gray-700 mb-4">{col.title}</h3>
-                        <p className="text-gray-500">Content for this collection goes here.</p>
+                        <p className="text-gray-500"></p>
                         <button
                             onClick={() => removeCollection(col.id)}
                             className="absolute top-4 right-4 text-gray-500 hover:text-red-500"
