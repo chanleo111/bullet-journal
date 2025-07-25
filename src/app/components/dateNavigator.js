@@ -1,4 +1,6 @@
 import React from 'react';
+import {faArrowLeft, faArrowRight,faCalendarDay} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const DateNavigator = ({ currentDate, setCurrentDate }) => {
   const handlePreviousDay = () => {
@@ -30,9 +32,9 @@ const DateNavigator = ({ currentDate, setCurrentDate }) => {
         <p className="text-gray-500">每日任務、事件和筆記</p>
       </div>
       <div className="flex items-center space-x-2">
-        <button onClick={handlePreviousDay} className="px-3 py-1 bg-white rounded-md shadow-sm hover:bg-gray-100">&lt;</button>
-        <button onClick={handleToday} className="px-4 py-2 bg-gray-800 text-white rounded-md shadow-sm hover:bg-gray-700">今天</button>
-        <button onClick={handleNextDay} className="px-3 py-1 bg-white rounded-md shadow-sm hover:bg-gray-100">&gt;</button>
+        <FontAwesomeIcon icon={faArrowLeft} onClick={handlePreviousDay} />
+        <FontAwesomeIcon icon ={faCalendarDay} onClick={handleToday} />
+        <FontAwesomeIcon icon={faArrowRight} onClick={handleNextDay} />
       </div>
     </div>
   );

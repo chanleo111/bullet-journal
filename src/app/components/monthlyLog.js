@@ -1,7 +1,8 @@
 "use client";
 import React, { useState, useMemo } from 'react';
 import BulletItem from './bulletItem';
-import isEqual from 'lodash/isEqual'; 
+import {faArrowLeft, faArrowRight,faCalendarDay} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const MonthlyLog = ({ 
   entries: initialEntries = [], 
@@ -47,7 +48,7 @@ const MonthlyLog = ({
 
   const handleAddItem = () => {
     if (!newItemText.trim()) return;
-
+    console.log('1'+newItemText);
     const newEntry = {
       id: Date.now(),
       date: new Date(
@@ -170,18 +171,8 @@ const MonthlyLog = ({
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">{formatDate(currentDate)}</h2>
         <div className="date-nav">
-          <button 
-            onClick={handlePreviousMonthly}
-            className="px-3 py-1 bg-gray-200 rounded mr-2 hover:bg-gray-300"
-          >
-            &lt;
-          </button>
-          <button 
-            onClick={handleNextMonthly}
-            className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
-          >
-            &gt;
-          </button>
+          <FontAwesomeIcon icon={faArrowLeft} onClick={handlePreviousMonthly} />
+          <FontAwesomeIcon icon={faArrowRight} onClick={handleNextMonthly} />
         </div>
       </div>
       <p className="mb-6 text-gray-500">月度概覽和事項規劃</p>
@@ -228,7 +219,7 @@ const MonthlyLog = ({
               type="text"
               value={newItemText}
               onChange={(e) => setNewItemText(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleAddItem()}
+              onClick= {handleAddItem}
               placeholder={`新增${newItemType === 'task' ? '待辨事項' : newItemType === 'event' ? '事件' : '想法'}...`}
               className="flex-grow border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
             />

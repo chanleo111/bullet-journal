@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { faPlus, faTrash} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const Card = ({ title, icon, items, onAddItem, onRemoveItem, onToggleItem }) => {
   const [newItem, setNewItem] = useState('');
@@ -36,12 +38,7 @@ const Card = ({ title, icon, items, onAddItem, onRemoveItem, onToggleItem }) => 
             >
               {item.text}
             </span> 
-            <button 
-              onClick={() => onRemoveItem(item.id)} 
-              className="text-red-400 hover:text-red-600 text-xs"
-            >
-              x
-            </button>
+             <FontAwesomeIcon icon={faTrash} onClick={() => onRemoveItem(item.id)} />
           </div>
         ))}
       </div>
@@ -49,17 +46,13 @@ const Card = ({ title, icon, items, onAddItem, onRemoveItem, onToggleItem }) => 
         <input
           type="text"
           value={newItem}
+          maxLength={15}
           onChange={(e) => setNewItem(e.target.value)}
           onClick={(e) => e.key ===  handleAddItem()}
           placeholder=""
           className="flex-grow border rounded px-2 py-1"
         />
-        <button 
-          onClick={handleAddItem} 
-          className="px-3 py-1 bg-blue-500 text-white rounded shadow-sm hover:bg-blue-600"
-        >
-          +
-        </button>
+          <FontAwesomeIcon icon={faPlus} onClick={handleAddItem} />
       </div>
     </div>
   );
@@ -134,7 +127,7 @@ const DailyLog = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 card-grid">
       <Card 
         title="待辨事項" 
         icon={<span className="mr-2 text-xl">•</span>} 
