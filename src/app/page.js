@@ -10,6 +10,7 @@ import CollectionLog from './components/collectionLog';
 const Home = () => {
   const [activeView, setActiveView] = useState('每日誌');
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [tasks, setTasks] = useState([]);
 
   const renderActiveView = () => {
     switch (activeView) {
@@ -17,7 +18,7 @@ const Home = () => {
         return (
           <>
             <DateNavigator currentDate={currentDate} setCurrentDate={setCurrentDate} />
-            <DailyLog />
+            <DailyLog currentDate={currentDate}/>
           </>
         );
       case '每月誌':
@@ -30,7 +31,6 @@ const Home = () => {
         return <DailyLog />;
     }
   };
-
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-8">
       <div className="max-w-7xl mx-auto">

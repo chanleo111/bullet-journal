@@ -16,12 +16,11 @@ const DateNavigator = ({ currentDate, setCurrentDate }) => {
   };
 
   const handleToday = () => {
-    setCurrentDate(new Date());
+    setCurrentDate(useDate());
   };
 
   const formatDate = (date) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
-    console.log('date:'+date);
     return date.toLocaleDateString('zh-CN', options);
   };
 

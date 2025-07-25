@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useMemo } from 'react';
-import BulletItem from './bulletItem';
 import {faArrowLeft, faArrowRight,faCalendarDay} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -48,7 +47,6 @@ const MonthlyLog = ({
 
   const handleAddItem = () => {
     if (!newItemText.trim()) return;
-    console.log('1'+newItemText);
     const newEntry = {
       id: Date.now(),
       date: new Date(
@@ -87,7 +85,7 @@ const MonthlyLog = ({
     const today = new Date().getDate();
     const currentMonth = new Date().getMonth();
     const currentYear = new Date().getFullYear();
-
+    
     const calendarDays = [];
     const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
 
@@ -147,8 +145,60 @@ const MonthlyLog = ({
 
     return <div className="calendar-grid">{calendarDays}</div>;
   };
+const Card = ({ title, icon, items, onAddItem, onRemoveItem, onToggleItem }) => {
+  const [newItem, setNewItem] = useState('');
+  const handleAddItem = () => {
+    if (newItem.trim()) {
+      switch(title){
+        case "待辨事項":
+          onAddItem('.' + newItem );
+          break;
+        
+        case "事件" :
+          onAddItem('○' + newItem);
+          break;
+        default:
+          onAddItem('-' + newItem);
+          break;
+      }
+      setNewItem('');
+    }
+  };
 
-  // 获取选中日期的項目
+  return (
+    <div className="bg-white rounded-lg shadow p-6 flex flex-col">
+      <h3 className="font-semibold text-gray-700 mb-4 flex items-center">
+        {icon}
+        {title}
+      </h3>
+      <div className="space-y-3 text-gray-600 flex-grow">
+        {items.map(item => (
+          <div key={item.id} className="flex justify-between items-center">
+            <span 
+              className={`cursor-pointer ${item.text.startsWith('x') ? '' : ''}`}
+              onClick={() => onToggleItem(item.id)}
+            >
+              {item.text}
+            </span> 
+             <FontAwesomeIcon icon={faTrash} onClick={() => onRemoveItem(item.id)} />
+          </div>
+        ))}
+      </div>
+      <div className="mt-4 flex space-x-2">
+        <input
+          type="text"
+          value={newItem}
+          maxLength={15}
+          onChange={(e) => setNewItem(e.target.value)}
+          onClick={(e) => e.key ===  handleAddItem()}
+          placeholder=""
+          className="flex-grow border rounded px-2 py-1"
+        />
+          <FontAwesomeIcon icon={faPlus} onClick={handleAddItem} />
+      </div>
+    </div>
+  );
+};
   const selectedEntries = useMemo(() => {
     return entries.filter(entry => {
       if (!entry?.date) return false;
@@ -175,7 +225,7 @@ const MonthlyLog = ({
           <FontAwesomeIcon icon={faArrowRight} onClick={handleNextMonthly} />
         </div>
       </div>
-      <p className="mb-6 text-gray-500">月度概覽和事項規劃</p>
+      <p className="mb-6 text-gray-500">每月待辨事項規劃</p>
       
       <div className="card p-4 mb-6">
         <h3 className="font-bold text-lg mb-4">日歷</h3>
@@ -187,69 +237,14 @@ const MonthlyLog = ({
           {selectedDate}日事項
         </h3>
         
-        <div className="mb-4">
-          <div className="flex space-x-2 mb-2">
-            <button
-              className={`px-3 py-1 rounded transition-colors ${
-                newItemType === 'task' ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300'
-              }`}
-              onClick={() => setNewItemType('task')}
-            >
-              待辨事項
-            </button>
-            <button
-              className={`px-3 py-1 rounded transition-colors ${
-                newItemType === 'event' ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300'
-              }`}
-              onClick={() => setNewItemType('event')}
-            >
-              事件
-            </button>
-            <button
-              className={`px-3 py-1 rounded transition-colors ${
-                newItemType === 'note' ? 'bg-blue-500 text-white' : 'bg-gray-200 hover:bg-gray-300'
-              }`}
-              onClick={() => setNewItemType('note')}
-            >
-              想法
-            </button>
-          </div>
-          <div className="flex">
-            <input
-              type="text"
-              value={newItemText}
-              onChange={(e) => setNewItemText(e.target.value)}
-              onClick= {handleAddItem}
-              placeholder={`新增${newItemType === 'task' ? '待辨事項' : newItemType === 'event' ? '事件' : '想法'}...`}
-              className="flex-grow border rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-500"
-            />
-            <button
-              onClick={handleAddItem}
-              className="ml-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-              disabled={!newItemText.trim()}
-            >
-              增加
-            </button>
-          </div>
+       
         </div>
         
-        <div className="space-y-2">
-          {selectedEntries.length === 0 ? (
-            <p className="text-gray-500 text-center py-4">今天無事項</p>
-          ) : (
-            selectedEntries.map(item => (
-              <BulletItem
-                key={item.id}
-                item={item}
-                onToggleComplete={() => handleToggleComplete(item.id)}
-                onDelete={() => handleDeleteItem(item.id)}
-              />
-            ))
-          )}
-        </div>
+        
       </div>
-    </div>
   );
 };
+
+
 
 export default MonthlyLog;
