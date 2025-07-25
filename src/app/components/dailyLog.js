@@ -111,31 +111,21 @@ const DailyLog = () => {
     saveData({ tasks, events, notes, [type]: newList });
   };
 
+  const prefixMap = {
+    tasks: isCompleted => isCompleted ? '.' : 'x',
+    events: isCompleted => isCompleted ? '○' : 'x',
+    notes: isCompleted => isCompleted ? '-' : 'x'
+  }
   const toggleItem = (list, setList, type) => (id) => {
     const newList = list.map(item => {
       if (item.id === id) {
-        const isCompleted = item.text.startsWith('x');
-        console.log('type:'+type);
-        switch(type){
-        case "tasks":
-           return {
-          ...item,
-          text: isCompleted ? '.' + item.text.substring(1) : 'x' + item.text.substring(1)
-          };
-          break;
-        
-        case "events" :
+         console.log('type:'+ type);
+          const isCompleted = item.text.startsWith('x');
+          const getPrefix = prefixMap[type] || [prefixMap.default];
           return {
           ...item,
-          text: isCompleted ? '○' + item.text.substring(1) : 'x' + item.text.substring(1)
+          text: getPrefix(isCompleted) +item.text.substring(1) 
           };
-          
-        default:
-          return {
-          ...item,
-          text: isCompleted ? '-' + item.text.substring(1) : 'x' + item.text.substring(1)
-          };
-      }
       }
       return item;
     });
