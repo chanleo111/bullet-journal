@@ -157,9 +157,9 @@ const DailyLog = ({ currentDate }) => {
   };
 
   const prefixMap = {
-    tasks: (isCompleted) => (isCompleted ? '.' : 'x'),
-    events: (isCompleted) => (isCompleted ? '○' : 'x'),
-    notes: (isCompleted) => (isCompleted ? '-' : 'x'),
+    tasks: (isCompleted) => (isCompleted ? 'x' : '.'),
+    events: (isCompleted) => (isCompleted ? 'x' : '○'),
+    notes: (isCompleted) => (isCompleted ? 'x' : '-'),
   };
 
   const toggleItem = (list, setList, type) => (id) => {
