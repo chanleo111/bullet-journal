@@ -1,167 +1,34 @@
 "use client";
-import React, { useState, useMemo } from 'react';
-import {faArrowLeft, faArrowRight,faCalendarDay} from '@fortawesome/free-solid-svg-icons';
+import React, { useState, useMemo,useEffect } from 'react';
+import {faPlus, faTrash,faArrowLeft, faArrowRight,faCalendarDay} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const MonthlyLog = ({ 
-  entries: initialEntries = [], 
-  onAddEntry = () => {}, 
-  onUpdateEntry = () => {}, 
-  onDeleteEntry = () => {} 
-}) => {
-  const entries = useMemo(() => {
-    return Array.isArray(initialEntries) ? initialEntries : [];
-  }, [initialEntries]);
-
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState(new Date().getDate());
-  const [newItemText, setNewItemText] = useState('');
-  const [newItemType, setNewItemType] = useState('task');
-
-  const handlePreviousMonthly = () => {
-    const newDate = new Date(currentDate);
-    newDate.setMonth(newDate.getMonth() - 1);
-    setCurrentDate(newDate);
-    setSelectedDate(1);
-  };
-
-  const handleNextMonthly = () => {
-    const newDate = new Date(currentDate);
-    newDate.setMonth(newDate.getMonth() + 1);
-    setCurrentDate(newDate);
-    setSelectedDate(1);
-  };
-
-  const formatDate = (date) => {
-    try {
-      const options = { year: 'numeric', month: 'long' };
-      return date.toLocaleDateString('zh-CN', options);
-    } catch {
-      return date.getFullYear() + '年' + (date.getMonth() + 1) + '月';
-    }
-  };
-
-  const handleDateSelect = (day) => {
-    setSelectedDate(day);
-  };
-
-  const handleAddItem = () => {
-    if (!newItemText.trim()) return;
-    const newEntry = {
-      id: Date.now(),
-      date: new Date(
-        currentDate.getFullYear(),
-        currentDate.getMonth(),
-        selectedDate
-      ).toISOString(),
-      text: newItemText,
-      type: newItemType,
-      completed: false
-    };
-
-    onAddEntry(newEntry);
-    setNewItemText('');
-  };
-
-  const handleToggleComplete = (id) => {
-    const updatedEntries = entries.map(entry => {
-      if (entry.id === id) {
-        return { ...entry, completed: !entry.completed };
-      }
-      return entry;
-    });
-    onUpdateEntry(updatedEntries);
-  };
-
-  const handleDeleteItem = (id) => {
-    onDeleteEntry(id);
-  };
-
-  const renderCalendar = () => {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-    const firstDay = new Date(year, month, 1).getDay();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const today = new Date().getDate();
-    const currentMonth = new Date().getMonth();
-    const currentYear = new Date().getFullYear();
-    
-    const calendarDays = [];
-    const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
-
-    weekdays.forEach(day => {
-      calendarDays.push(
-        <div key={`weekday-${day}`} className="calendar-weekday">
-          {day}
-        </div>
-      );
-    });
-
-    for (let i = 0; i < firstDay; i++) {
-      calendarDays.push(
-        <div key={`empty-${i}`} className="calendar-day empty"></div>
-      );
-    }
-
-    for (let day = 1; day <= daysInMonth; day++) {
-      const dayEntries = entries.filter(entry => {
-        try {
-          const entryDate = new Date(entry.date);
-          return (
-            entryDate.getFullYear() === year &&
-            entryDate.getMonth() === month &&
-            entryDate.getDate() === day
-          );
-        } catch {
-          return false;
-        }
-      });
-
-      const isToday = (
-        day === today && 
-        month === currentMonth && 
-        year === currentYear
-      );
-
-      calendarDays.push(
-        <div
-          key={day}
-          className={`calendar-day 
-            ${isToday ? 'today' : ''} 
-            ${day === selectedDate ? 'selected' : ''}`}
-          onClick={() => handleDateSelect(day)}
-        >
-          <div className="day-number">{day}</div>
-          {dayEntries.length > 0 && (
-            <div className="day-indicator">
-              {dayEntries.filter(e => !e.completed).length > 0 && (
-                <span className="pending-indicator"></span>
-              )}
-            </div>
-          )}
-        </div>
-      );
-    }
-
-    return <div className="calendar-grid">{calendarDays}</div>;
-  };
 const Card = ({ title, icon, items, onAddItem, onRemoveItem, onToggleItem }) => {
   const [newItem, setNewItem] = useState('');
+
   const handleAddItem = () => {
     if (newItem.trim()) {
-      switch(title){
-        case "待辨事項":
-          onAddItem('.' + newItem );
+      switch (title) {
+        case '待辨事項':
+          onAddItem('.' + newItem);
           break;
-        
-        case "事件" :
+        case '事件':
           onAddItem('○' + newItem);
           break;
-        default:
+        case '想法':
           onAddItem('-' + newItem);
           break;
+        default:
+          console.error('not vaild title:', title);
+          return;
       }
       setNewItem('');
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleAddItem();
     }
   };
 
@@ -172,17 +39,25 @@ const Card = ({ title, icon, items, onAddItem, onRemoveItem, onToggleItem }) => 
         {title}
       </h3>
       <div className="space-y-3 text-gray-600 flex-grow">
-        {items.map(item => (
+        {items.map((item) => (
           <div key={item.id} className="flex justify-between items-center">
-            <span 
-              className={`cursor-pointer ${item.text.startsWith('x') ? '' : ''}`}
-              onClick={() => onToggleItem(item.id)}
+            <span
+              className={`cursor-pointer ${item.text && item.text.startsWith('x') ? 'line-through' : ''}`}
+              onClick={() => {
+                console.log('change id:', item.id, 'text:', item.text); 
+                onToggleItem(item.id);
+              }}
             >
-              {item.text}
-            </span> 
-             <FontAwesomeIcon icon={faTrash} onClick={() => onRemoveItem(item.id)} />
+              {item.text || 'not vaild'}
+            </span>
+            <FontAwesomeIcon
+              icon={faTrash}
+              className="cursor-pointer text-gray-500 hover:text-red-500"
+              onClick={() => onRemoveItem(item.id)}
+            />
           </div>
         ))}
+        {items.length === 0 && <p className="text-gray-500"></p>}
       </div>
       <div className="mt-4 flex space-x-2">
         <input
@@ -190,61 +65,180 @@ const Card = ({ title, icon, items, onAddItem, onRemoveItem, onToggleItem }) => 
           value={newItem}
           maxLength={15}
           onChange={(e) => setNewItem(e.target.value)}
-          onClick={(e) => e.key ===  handleAddItem()}
+          onKeyPress={handleKeyPress}
           placeholder=""
           className="flex-grow border rounded px-2 py-1"
         />
-          <FontAwesomeIcon icon={faPlus} onClick={handleAddItem} />
+        <FontAwesomeIcon
+          icon={faPlus}
+          className="cursor-pointer text-gray-500 hover:text-green-500"
+          onClick={handleAddItem}
+        />
       </div>
     </div>
   );
 };
-  const selectedEntries = useMemo(() => {
-    return entries.filter(entry => {
-      if (!entry?.date) return false;
-      
-      try {
-        const entryDate = new Date(entry.date);
-        return (
-          entryDate.getFullYear() === currentDate.getFullYear() &&
-          entryDate.getMonth() === currentDate.getMonth() &&
-          entryDate.getDate() === selectedDate
-        );
-      } catch {
-        return false;
+
+const MonthlyLog = ({ 
+  currentDate }) => {
+  const [tasks, setTasks] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [notes, setNotes] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('http://localhost:3001/api/data');
+      if (!response.ok) {
+        throw new Error(`save data fail: ${response.statusText}`);
       }
+      const data = await response.json();
+      console.log('load data:', data); 
+      setTasks(data.tasks || []);
+      setEvents(data.events || []);
+      setNotes(data.notes || []);
+      setError(null);
+    } catch (error) {
+      console.error('save data fail:', error);
+      setError(error.message || 'save data fail');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [currentDate]);
+
+  const saveData = async (updatedData) => {
+    try {
+      console.log('save data:', updatedData); 
+      const response = await fetch('http://localhost:3001/api/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedData),
+      });
+      if (!response.ok) {
+        throw new Error(`save data fail: ${response.statusText}`);
+      }
+      console.log('save success'); 
+      await fetchData();
+    } catch (error) {
+      console.error('save data fail:', error);
+      setError(error.message || 'save data fail');
+    }
+  };
+
+  const addItem = (list, setList, type) => (text) => {
+    const effectiveDate = currentDate || new Date();
+    const dateKey = effectiveDate.toLocaleDateString('zh-CN', { timeZone: 'Asia/Hong_Kong' }).split(' ')[0].replace(/\//g, '-');
+    const newItem = { id: Date.now(), text, date: dateKey };
+    const newList = [...list, newItem];
+    console.log('new item:', newList); 
+    setList(newList);
+    saveData({
+      tasks: type === 'tasks' ? newList : tasks,
+      events: type === 'events' ? newList : events,
+      notes: type === 'notes' ? newList : notes,
     });
-  }, [entries, currentDate, selectedDate]);
+  };
+
+  const removeItem = (list, setList, type) => (id) => {
+    const newList = list.filter((item) => item.id !== id);
+    console.log('删除后列表:', newList); 
+    setList(newList);
+    saveData({
+      tasks: type === 'tasks' ? newList : tasks,
+      events: type === 'events' ? newList : events,
+      notes: type === 'notes' ? newList : notes,
+    });
+  };
+
+  const prefixMap = {
+    tasks: (isCompleted) => (isCompleted ? 'x' : '.'),
+    events: (isCompleted) => (isCompleted ? 'x' : '○'),
+    notes: (isCompleted) => (isCompleted ? 'x' : '-'),
+  };
+
+  const toggleItem = (list, setList, type) => (id) => {
+    console.log('Toggle called with id:', id, 'type:', type, 'list:', list); 
+    let updated = false;
+    const newList = list.map((item) => {
+      if (item.id === id) {
+        console.log('change item:', type, item); 
+        const isCompleted = item.text && item.text.startsWith('x');
+        console.log('isCompleted:', isCompleted); 
+        const getPrefix = prefixMap[type];
+        if (!getPrefix) {
+          console.error('not vaild type:', type);
+          return item;
+        }
+        const newPrefix = getPrefix(!isCompleted);
+        console.log('new prefix:', newPrefix); 
+        const newText = newPrefix + (item.text && item.text.length > 1 ? item.text.substring(1) : '');
+        console.log('new text:', newText); 
+        updated = true;
+        return {
+          ...item,
+          text: newText,
+        };
+      }
+      return item;
+    });
+    if (updated) {
+      setList([...newList]); 
+      saveData({
+        tasks: type === 'tasks' ? newList : tasks,
+        events: type === 'events' ? newList : events,
+        notes: type === 'notes' ? newList : notes,
+      });
+    } else {
+      console.warn('not find id:', id);
+    }
+  };
+
+  const filterByDate = (items) =>
+    items.filter(
+      (item) =>
+        item.date &&
+        new Date(item.date).toDateString() === currentDate.toDateString()
+    );
+
+  if (loading) return <div>loading...</div>;
+  if (error) return <div className="text-red-500 p-4 border border-red-500">error：{error}</div>;
 
   return (
-    <div className="log-container">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">{formatDate(currentDate)}</h2>
-        <div className="date-nav">
-          <FontAwesomeIcon icon={faArrowLeft} onClick={handlePreviousMonthly} />
-          <FontAwesomeIcon icon={faArrowRight} onClick={handleNextMonthly} />
-        </div>
-      </div>
-      <p className="mb-6 text-gray-500">每月待辨事項規劃</p>
-      
-      <div className="card p-4 mb-6">
-        <h3 className="font-bold text-lg mb-4">日歷</h3>
-        {renderCalendar()}
-      </div>
-
-      <div className="card p-4">
-        <h3 className="font-bold text-lg mb-4">
-          {selectedDate}日事項
-        </h3>
-        
-       
-        </div>
-        
-        
-      </div>
-  );
-};
-
-
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 card-grid">
+      <Card
+        title="待辨事項"
+        icon={<span className="mr-2 text-xl">•</span>}
+        items={filterByDate(tasks)}
+        onAddItem={addItem(tasks, setTasks, 'tasks')}
+        onRemoveItem={removeItem(tasks, setTasks, 'tasks')}
+        onToggleItem={toggleItem(tasks, setTasks, 'tasks')}
+      />
+      <Card
+        title="事件"
+        icon={<span className="mr-2 text-xl">○</span>}
+        items={filterByDate(events)}
+        onAddItem={addItem(events, setEvents, 'events')}
+        onRemoveItem={removeItem(events, setEvents, 'events')}
+        onToggleItem={toggleItem(events, setEvents, 'events')}
+      />
+      <Card
+        title="想法"
+        icon={<span className="mr-2 text-xl">—</span>}
+        items={filterByDate(notes)}
+        onAddItem={addItem(notes, setNotes, 'notes')}
+        onRemoveItem={removeItem(notes, setNotes, 'notes')}
+        onToggleItem={toggleItem(notes, setNotes, 'notes')}
+      />
+    </div>
+    
+  )
+}
 
 export default MonthlyLog;

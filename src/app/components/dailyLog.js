@@ -125,7 +125,7 @@ const DailyLog = ({ currentDate }) => {
         throw new Error(`save data fail: ${response.statusText}`);
       }
       console.log('save success'); 
-      await fetchData(); // 刷新数据
+      await fetchData();
     } catch (error) {
       console.error('save data fail:', error);
       setError(error.message || 'save data fail');
@@ -133,7 +133,8 @@ const DailyLog = ({ currentDate }) => {
   };
 
   const addItem = (list, setList, type) => (text) => {
-    const dateKey = currentDate.toISOString().split('T')[0];
+    const effectiveDate = currentDate || new Date();
+    const dateKey = effectiveDate.toLocaleDateString('zh-CN', { timeZone: 'Asia/Hong_Kong' }).split(' ')[0].replace(/\//g, '-');
     const newItem = { id: Date.now(), text, date: dateKey };
     const newList = [...list, newItem];
     console.log('new item:', newList); 
@@ -187,8 +188,6 @@ const DailyLog = ({ currentDate }) => {
       }
       return item;
     });
-    console.log('切换后列表:', newList); 
-    console.log('是否更新:', updated); 
     if (updated) {
       setList([...newList]); 
       saveData({
@@ -208,7 +207,7 @@ const DailyLog = ({ currentDate }) => {
         new Date(item.date).toDateString() === currentDate.toDateString()
     );
 
-  if (loading) return <div>加载中...</div>;
+  if (loading) return <div>loading...</div>;
   if (error) return <div className="text-red-500 p-4 border border-red-500">错误：{error}</div>;
 
   return (

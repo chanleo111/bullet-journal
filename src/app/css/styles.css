@@ -23,10 +23,6 @@
   background-color: #f8fafc;
 }
 
-.calendar-day.today {
-  border-color: #3b82f6;
-  background-color: #eff6ff;
-}
 
 .calendar-day.selected {
   background-color: #dbeafe;

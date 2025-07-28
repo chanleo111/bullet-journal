@@ -4,25 +4,37 @@ import Navbar from './components/navbar';
 import DateNavigator from './components/dateNavigator';
 import DailyLog from './components/dailyLog';
 import MonthlyLog from './components/monthlyLog';
+import MonthNavigator from './components/monthNavigator';
 import YearlyLog from './components/yearlyLog';
 import CollectionLog from './components/collectionLog';
 
 const Home = () => {
   const [activeView, setActiveView] = useState('每日誌');
+  const now = new Date();
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [tasks, setTasks] = useState([]);
-
+  
+  const handleDateChange = (newDate) => {
+    const updatedDate = new Date(newDate.getFullYear(), newDate.getMonth(), newDate.getDate());
+        console.log('updated currentDate:', updatedDate.toLocaleString('zh-CN', { timeZone: 'Asia/Hong_Kong' }));
+        setCurrentDate(updatedDate);
+  };
   const renderActiveView = () => {
     switch (activeView) {
       case '每日誌':
         return (
           <>
-            <DateNavigator currentDate={currentDate} setCurrentDate={setCurrentDate} />
+            <DateNavigator currentDate={currentDate} setCurrentDate={handleDateChange} />
             <DailyLog currentDate={currentDate}/>
           </>
         );
       case '每月誌':
-        return <MonthlyLog />;
+        return (
+        <>
+          <MonthNavigator currentDate={currentDate} setCurrentDate ={setCurrentDate} 
+          onMonthChange={handleDateChange} />
+          <MonthlyLog currentDate={currentDate}/>
+        </>
+        );
       case '未來誌':
         return <YearlyLog />;
       case '主題頁':
