@@ -5,8 +5,10 @@ import DateNavigator from './components/dateNavigator';
 import DailyLog from './components/dailyLog';
 import MonthlyLog from './components/monthlyLog';
 import MonthNavigator from './components/monthNavigator';
-import YearlyLog from './components/yearlyLog';
+import FutureLog from './components/futureLog';
+import FutuerNavigator from './components/futureNavigator';
 import CollectionLog from './components/collectionLog';
+import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";
 
 const Home = () => {
   const [activeView, setActiveView] = useState('每日誌');
@@ -23,20 +25,34 @@ const Home = () => {
       case '每日誌':
         return (
           <>
-            <DateNavigator currentDate={currentDate} setCurrentDate={handleDateChange} />
-            <DailyLog currentDate={currentDate}/>
+          <DateNavigator currentDate={currentDate} setCurrentDate={handleDateChange} />
+          <DailyLog currentDate={currentDate}/>
           </>
         );
       case '每月誌':
         return (
-        <>
-          <MonthNavigator currentDate={currentDate} setCurrentDate ={setCurrentDate} 
-          onMonthChange={handleDateChange} />
-          <MonthlyLog currentDate={currentDate}/>
-        </>
+          <PanelGroup direction="horizontal" style={{ height: "200vh" }}>
+            <Panel defaultSize={50} minSize={30}>
+              <MonthNavigator currentDate={currentDate} setCurrentDate ={setCurrentDate} 
+              onMonthChange={handleDateChange} />
+            </Panel>
+          <Panel defaultSize={50} minSize={20}>
+            <MonthlyLog currentDate={currentDate}/>
+          </Panel>
+          </PanelGroup>
         );
       case '未來誌':
-        return <YearlyLog />;
+        return (
+        <PanelGroup direction="horizontal" style={{ height: "1000vh" }}>
+            <Panel defaultSize={50} minSize={30}>
+            <FutuerNavigator currentDate={currentDate} setCurrentDate ={setCurrentDate} 
+              onMonthChange={handleDateChange} />
+            </Panel>
+            <Panel defaultSize={50} minSize={20}>
+              <FutureLog currentDate={currentDate}/>
+            </Panel>
+        </PanelGroup>
+        );
       case '主題頁':
         return <CollectionLog />;
       default:

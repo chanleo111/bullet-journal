@@ -89,7 +89,8 @@ const MonthNavigator = ({ currentDate: initialDate = new Date(), setCurrentDate 
   };
 
   return (
-    <div className="items-center justify-between my-8">
+    
+    <div className="flex items-center justify-between my-8">
       <div className="log-container">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">{formatDate(currentDate)}</h2>
@@ -101,16 +102,13 @@ const MonthNavigator = ({ currentDate: initialDate = new Date(), setCurrentDate 
         <p className="mb-6 text-gray-500">每月待辨事項規劃</p>
         
         <div className="card p-4 mb-6">
-          <h3 className="font-bold text-lg mb-4">日歷</h3>
-          {renderCalendar()}
-        </div>
-
-        <div className="card p-4">
           <h3 className="font-bold text-lg mb-4">
             {selectedDate}日待辨事項
           </h3>
         </div>
-      </div>
+          {renderCalendar()}
+        </div>
+
     </div>
   );
 };

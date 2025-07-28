@@ -26,11 +26,6 @@ const Card = ({ title, icon, items, onAddItem, onRemoveItem, onToggleItem }) => 
     }
   };
 
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      handleAddItem();
-    }
-  };
 
   return (
     <div className="bg-white rounded-lg shadow p-6 flex flex-col">
@@ -65,7 +60,6 @@ const Card = ({ title, icon, items, onAddItem, onRemoveItem, onToggleItem }) => 
           value={newItem}
           maxLength={15}
           onChange={(e) => setNewItem(e.target.value)}
-          onKeyPress={handleKeyPress}
           placeholder=""
           className="flex-grow border rounded px-2 py-1"
         />
@@ -79,8 +73,7 @@ const Card = ({ title, icon, items, onAddItem, onRemoveItem, onToggleItem }) => 
   );
 };
 
-const MonthlyLog = ({ 
-  currentDate }) => {
+const MonthlyLog = ({  currentDate }) => {
   const [tasks, setTasks] = useState([]);
   const [events, setEvents] = useState([]);
   const [notes, setNotes] = useState([]);
@@ -237,7 +230,6 @@ const MonthlyLog = ({
         onToggleItem={toggleItem(notes, setNotes, 'notes')}
       />
     </div>
-    
   )
 }
 
