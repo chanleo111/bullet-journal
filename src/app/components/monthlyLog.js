@@ -2,7 +2,6 @@
 import React, { useState, useMemo,useEffect } from 'react';
 import {faPlus, faTrash,faArrowLeft, faArrowRight,faCalendarDay} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
 const Card = ({ title, icon, items, onAddItem, onRemoveItem, onToggleItem }) => {
   const [newItem, setNewItem] = useState('');
 
@@ -72,7 +71,6 @@ const Card = ({ title, icon, items, onAddItem, onRemoveItem, onToggleItem }) => 
     </div>
   );
 };
-
 const MonthlyLog = ({  currentDate }) => {
   const [tasks, setTasks] = useState([]);
   const [events, setEvents] = useState([]);
@@ -141,7 +139,7 @@ const MonthlyLog = ({  currentDate }) => {
 
   const removeItem = (list, setList, type) => (id) => {
     const newList = list.filter((item) => item.id !== id);
-    console.log('删除后列表:', newList); 
+    console.log('delete list:', newList); 
     setList(newList);
     saveData({
       tasks: type === 'tasks' ? newList : tasks,

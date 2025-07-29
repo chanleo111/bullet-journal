@@ -25,7 +25,7 @@ const Home = () => {
       case '每日誌':
         return (
           <>
-          <DateNavigator currentDate={currentDate} setCurrentDate={handleDateChange} />
+          <DateNavigator currentDate={currentDate} setCurrentDate={handleDateChange} onChange={(newDate) => setCurrentDate(newDate)}/>
           <DailyLog currentDate={currentDate}/>
           </>
         );
@@ -33,8 +33,8 @@ const Home = () => {
         return (
           <PanelGroup direction="horizontal" style={{ height: "200vh" }}>
             <Panel defaultSize={50} minSize={30}>
-              <MonthNavigator currentDate={currentDate} setCurrentDate ={setCurrentDate} 
-              onMonthChange={handleDateChange} />
+              <MonthNavigator currentDate={currentDate} setCurrentDate ={handleDateChange} 
+              onMonthChange={handleDateChange} onChange={(newDate) => setCurrentDate(newDate)}/>
             </Panel>
           <Panel defaultSize={50} minSize={20}>
             <MonthlyLog currentDate={currentDate}/>

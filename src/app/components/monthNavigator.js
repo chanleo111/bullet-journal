@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { faArrowLeft, faArrowRight, faCalendarDay } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { MonthPicker } from './date/monthPicker';
 
 const MonthNavigator = ({ currentDate: initialDate = new Date(), setCurrentDate }) => {
   const [selectedDate, setSelectedDate] = useState(initialDate.getDate());
@@ -84,7 +85,7 @@ const MonthNavigator = ({ currentDate: initialDate = new Date(), setCurrentDate 
   };
 
   const formatDate = (date) => {
-    const options = { year: 'numeric', month: 'long' }; // 只显示年和月
+    const options = { year: 'numeric', month: 'long' }; 
     return date.toLocaleDateString('zh-CN', options);
   };
 
@@ -93,18 +94,16 @@ const MonthNavigator = ({ currentDate: initialDate = new Date(), setCurrentDate 
     <div className="flex items-center justify-between my-8">
       <div className="log-container">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold">{formatDate(currentDate)}</h2>
-          <div className="date-nav">
-            <FontAwesomeIcon icon={faArrowLeft} onClick={handlePreviousMonthly} />
-            <FontAwesomeIcon icon={faArrowRight} onClick={handleNextMonthly} />
-          </div>
+          <h2 className="text-2xl font-bold">
+          <MonthPicker 
+           currentDate={formatDate(currentDate)}
+           onchange={setCurrentDate}
+          />
+          </h2>
         </div>
+        <div className="card p-4 mb-6">
         <p className="mb-6 text-gray-500">每月待辨事項規劃</p>
         
-        <div className="card p-4 mb-6">
-          <h3 className="font-bold text-lg mb-4">
-            {selectedDate}日待辨事項
-          </h3>
         </div>
           {renderCalendar()}
         </div>
