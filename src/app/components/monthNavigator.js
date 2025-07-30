@@ -14,7 +14,7 @@ const MonthNavigator = ({ currentDate: initialDate = new Date(), setCurrentDate 
   const currentDate = useMemo(() => {
     const date = new Date(selectedYearMonth.year, selectedYearMonth.month, selectedDate || 1);
     console.log('Computing currentDate:', selectedYearMonth.year, selectedYearMonth.month, selectedDate, 'Result:', date.toLocaleString('zh-CN', { timeZone: 'Asia/Hong_Kong' }));
-    return isNaN(date) ? new Date() : date; // 回退到当前日期
+    return isNaN(date) ? new Date() : date; 
   }, [selectedYearMonth.year, selectedYearMonth.month, selectedDate]);
 
   useEffect(() => {
@@ -46,7 +46,7 @@ const MonthNavigator = ({ currentDate: initialDate = new Date(), setCurrentDate 
     if (year && month >= 0 && month <= 11) {
       setSelectedYearMonth({ year, month });
       setSelectedDate(1);
-      updateCurrentDate(); // 强制更新
+      updateCurrentDate(); 
     } else {
       console.warn('Invalid year or month:', year, month);
     }
@@ -112,8 +112,10 @@ const MonthNavigator = ({ currentDate: initialDate = new Date(), setCurrentDate 
     return <div className="calendar-grid">{calendarDays}</div>;
   };
 
-  const formatDate = (date) => {
-    const options = { year: 'numeric', month: 'long' };
+  const formatDate = (date,type) => {
+    const options = type === "ym" 
+    ? { year: 'numeric', month: 'long' }
+    : { year: 'numeric', month: 'long', day: 'numeric' };
     return date.toLocaleDateString('zh-CN', options);
   };
 
@@ -135,7 +137,7 @@ const MonthNavigator = ({ currentDate: initialDate = new Date(), setCurrentDate 
         </div>
         <div className="card p-4 mb-6">
           <p className="mb-6 text-gray-500">每月待辨事項規劃</p>
-          <h1>{formatDate(currentDate)}</h1>
+          <h1>{formatDate(currentDate,'ymd')}</h1>
         </div>
         {renderCalendar()}
       </div>
