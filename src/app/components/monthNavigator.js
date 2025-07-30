@@ -1,43 +1,71 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect, useCallback, useRef } from 'react';
 import { faArrowLeft, faArrowRight, faCalendarDay } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { MonthPicker } from './date/monthPicker';
 
 const MonthNavigator = ({ currentDate: initialDate = new Date(), setCurrentDate }) => {
+  const isMounted = useRef(false);
   const [selectedDate, setSelectedDate] = useState(initialDate.getDate());
+  const [selectedYearMonth, setSelectedYearMonth] = useState({
+    year: initialDate.getFullYear(),
+    month: initialDate.getMonth(),
+  });
 
   const currentDate = useMemo(() => {
-    return new Date(initialDate.getFullYear(), initialDate.getMonth(), selectedDate || 1);
-    }, [initialDate, selectedDate]);
+    const date = new Date(selectedYearMonth.year, selectedYearMonth.month, selectedDate || 1);
+    console.log('Computing currentDate:', selectedYearMonth.year, selectedYearMonth.month, selectedDate, 'Result:', date.toLocaleString('zh-CN', { timeZone: 'Asia/Hong_Kong' }));
+    return isNaN(date) ? new Date() : date; // 回退到当前日期
+  }, [selectedYearMonth.year, selectedYearMonth.month, selectedDate]);
 
-  const handlePreviousMonthly = () => {
-    const newDate = new Date(currentDate);
-    newDate.setMonth(newDate.getMonth() - 1);
-    console.log('Previous Month:', newDate.toLocaleString('zh-CN', { timeZone: 'Asia/Hong_Kong' }));
-    setCurrentDate(newDate);
-  };
+  useEffect(() => {
+    if (initialDate && !isNaN(initialDate)) {
+      console.log('Syncing initialDate:', initialDate.toLocaleString('zh-CN', { timeZone: 'Asia/Hong_Kong' }));
+      setSelectedYearMonth({
+        year: initialDate.getFullYear(),
+        month: initialDate.getMonth(),
+      });
+      setSelectedDate(initialDate.getDate());
+    }
+  }, [initialDate]);
 
-  const handleNextMonthly = () => {
-    const newDate = new Date(currentDate);
-    newDate.setMonth(newDate.getMonth() + 1);
-    setCurrentDate(newDate);
-  };
+  const updateCurrentDate = useCallback(() => {
+    console.log('Updating currentDate:', currentDate.toLocaleString('zh-CN', { timeZone: 'Asia/Hong_Kong' }));
+    setCurrentDate(currentDate);
+  }, [currentDate, setCurrentDate]);
 
-  const handleToday = () => {
-    const today = new Date();
-    setCurrentDate(today);
-    setSelectedDate(today.getDate());
+  useEffect(() => {
+    if (isMounted.current) {
+      updateCurrentDate();
+    } else {
+      isMounted.current = true;
+    }
+  }, [updateCurrentDate, selectedYearMonth.year, selectedYearMonth.month, selectedDate]);
+
+  const handleMonthChange = (year, month) => {
+    console.log('handleMonthChange called with:', year, month);
+    if (year && month >= 0 && month <= 11) {
+      setSelectedYearMonth({ year, month });
+      setSelectedDate(1);
+      updateCurrentDate(); // 强制更新
+    } else {
+      console.warn('Invalid year or month:', year, month);
+    }
   };
 
   const handleDateSelect = (day) => {
+    console.log('handleDateSelect called with day:', day);
     setSelectedDate(day);
-    const newDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-    setCurrentDate(newDate);
+    const newDate = new Date(selectedYearMonth.year, selectedYearMonth.month, day);
+    console.log('New date computed:', newDate.toLocaleString('zh-CN', { timeZone: 'Asia/Hong_Kong' }));
+    if (!isNaN(newDate)) {
+      setCurrentDate(newDate);
+    }
   };
 
   const renderCalendar = () => {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
+    const year = selectedYearMonth.year;
+    const month = selectedYearMonth.month;
+    console.log('Rendering calendar for:', year, month);
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const today = new Date();
@@ -85,29 +113,32 @@ const MonthNavigator = ({ currentDate: initialDate = new Date(), setCurrentDate 
   };
 
   const formatDate = (date) => {
-    const options = { year: 'numeric', month: 'long' }; 
+    const options = { year: 'numeric', month: 'long' };
     return date.toLocaleDateString('zh-CN', options);
   };
 
   return (
-    
     <div className="flex items-center justify-between my-8">
       <div className="log-container">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">
-          <MonthPicker 
-           currentDate={formatDate(currentDate)}
-           onchange={setCurrentDate}
-          />
+            <MonthPicker
+              currentDate={currentDate}
+              onChange={handleMonthChange}
+            />
           </h2>
+          <div className="date-nav">
+            <FontAwesomeIcon icon={faArrowLeft} onClick={() => handleMonthChange(selectedYearMonth.year, selectedYearMonth.month - 1)} />
+            <FontAwesomeIcon icon={faCalendarDay} onClick={() => handleMonthChange(new Date().getFullYear(), new Date().getMonth())} />
+            <FontAwesomeIcon icon={faArrowRight} onClick={() => handleMonthChange(selectedYearMonth.year, selectedYearMonth.month + 1)} />
+          </div>
         </div>
         <div className="card p-4 mb-6">
-        <p className="mb-6 text-gray-500">每月待辨事項規劃</p>
-        
+          <p className="mb-6 text-gray-500">每月待辨事項規劃</p>
+          <h1>{formatDate(currentDate)}</h1>
         </div>
-          {renderCalendar()}
-        </div>
-
+        {renderCalendar()}
+      </div>
     </div>
   );
 };

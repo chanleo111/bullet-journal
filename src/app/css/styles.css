@@ -56,3 +56,30 @@
 .card-grid {
   display: flex;
 }
+
+.enhanced-card {
+  transition: all 0.3s ease;
+}
+
+.enhanced-card:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-option {
+  transition: background-color 0.2s;
+}
+
+.dropdown-option:hover {
+  background-color: #f3f4f6;
+}
+
+.dropdown-container {
+  max-height: 200px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.full-row {
+  grid-column: 1 / -1;
+  background-color: #f0f0f0;
+  border: 1px dashed red;   
+}

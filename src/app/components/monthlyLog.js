@@ -1,7 +1,8 @@
 "use client";
-import React, { useState, useMemo,useEffect } from 'react';
-import {faPlus, faTrash,faArrowLeft, faArrowRight,faCalendarDay} from '@fortawesome/free-solid-svg-icons';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { faPlus, faTrash, faArrowLeft, faArrowRight, faCalendarDay } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 const Card = ({ title, icon, items, onAddItem, onRemoveItem, onToggleItem }) => {
   const [newItem, setNewItem] = useState('');
 
@@ -18,13 +19,12 @@ const Card = ({ title, icon, items, onAddItem, onRemoveItem, onToggleItem }) => 
           onAddItem('-' + newItem);
           break;
         default:
-          console.error('not vaild title:', title);
+          console.error('not valid title:', title);
           return;
       }
       setNewItem('');
     }
   };
-
 
   return (
     <div className="bg-white rounded-lg shadow p-6 flex flex-col">
@@ -42,7 +42,7 @@ const Card = ({ title, icon, items, onAddItem, onRemoveItem, onToggleItem }) => 
                 onToggleItem(item.id);
               }}
             >
-              {item.text || 'not vaild'}
+              {item.text || 'not valid'}
             </span>
             <FontAwesomeIcon
               icon={faTrash}
@@ -71,12 +71,15 @@ const Card = ({ title, icon, items, onAddItem, onRemoveItem, onToggleItem }) => 
     </div>
   );
 };
-const MonthlyLog = ({  currentDate }) => {
+
+const MonthlyLog = ({ currentDate }) => {
   const [tasks, setTasks] = useState([]);
   const [events, setEvents] = useState([]);
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const isInitialMount = useRef(true);
+
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -99,7 +102,12 @@ const MonthlyLog = ({  currentDate }) => {
   };
 
   useEffect(() => {
-    fetchData();
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      fetchData(); 
+    } else if (currentDate) {
+      fetchData(); 
+    }
   }, [currentDate]);
 
   const saveData = async (updatedData) => {
@@ -164,7 +172,7 @@ const MonthlyLog = ({  currentDate }) => {
         console.log('isCompleted:', isCompleted); 
         const getPrefix = prefixMap[type];
         if (!getPrefix) {
-          console.error('not vaild type:', type);
+          console.error('not valid type:', type);
           return item;
         }
         const newPrefix = getPrefix(!isCompleted);
@@ -228,7 +236,7 @@ const MonthlyLog = ({  currentDate }) => {
         onToggleItem={toggleItem(notes, setNotes, 'notes')}
       />
     </div>
-  )
-}
+  );
+};
 
 export default MonthlyLog;

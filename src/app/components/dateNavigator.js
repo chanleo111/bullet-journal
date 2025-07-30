@@ -1,6 +1,4 @@
 import React from 'react';
-import {faArrowLeft, faArrowRight,faCalendarDay} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DayPicker } from './date/datePicker';
 
 const DateNavigator = ({ currentDate, setCurrentDate,onChange}) => {
@@ -14,11 +12,6 @@ const DateNavigator = ({ currentDate, setCurrentDate,onChange}) => {
     }
   }
   
-
-  const formatDate = (date) => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
-    return date.toLocaleDateString('zh-CN', options);
-  };
   
   return (
     <div className="flex items-center justify-between my-8">
