@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Navbar = ({ activeView, setActiveView }) => {
-  const views = ['每日誌', '每月誌', '未來誌', '主題頁'];
+  const views = ['介紹','每日誌', '每月誌', '未來誌', '主題頁'];
 
   return (
     <div className="bg-gray-200 rounded-full p-1 flex items-center justify-center space-x-1">

@@ -8,8 +8,9 @@ import MonthNavigator from './components/monthNavigator';
 import FutureLog from './components/futureLog';
 import FutureNavigator from './components/futureNavigator';
 import CollectionLog from './components/collectionLog';
-import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";
-
+import { Container,Row,Col } from 'react-bootstrap';
+import ChatBot from './components/chatbot/chatbot';
+console.log(ChatBot);
 const Home = () => {
   const [activeView, setActiveView] = useState('每日誌');
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -29,21 +30,26 @@ const Home = () => {
       case '每日誌':
         return (
           <>
-            <DateNavigator currentDate={currentDate} setCurrentDate={handleDateChange} />
-            <DailyLog currentDate={currentDate} />
+            <Container>
+              <DateNavigator currentDate={currentDate} setCurrentDate={handleDateChange} />
+              <DailyLog currentDate={currentDate} />
+            
+            </Container>
           </>
         );
       case '每月誌':
         return (
-          <PanelGroup direction="horizontal">
-            <Panel defaultSize={50} minSize={30}>
-              <MonthNavigator currentDate={currentDate} setCurrentDate={handleDateChange} />
-            </Panel>
-            <PanelResizeHandle />
-            <Panel defaultSize={50} minSize={20}>
-              <MonthlyLog currentDate={currentDate} />
-            </Panel>
-          </PanelGroup>
+          
+          <Container fluid>
+            <Row>
+              <Col xs={12} sm={6} md={4} className="month-navigator">
+                <MonthNavigator currentDate={currentDate} setCurrentDate={handleDateChange} />
+              </Col>
+              <Col xs={12} sm={6} md={8} className="monthly-log">
+                <MonthlyLog currentDate={currentDate} />
+              </Col>
+            </Row>
+          </Container>
         );
       case '未來誌':
         return (
@@ -59,6 +65,8 @@ const Home = () => {
         );
       case '主題頁':
         return <CollectionLog />;
+      case '介紹':
+        return <ChatBot/>
       default:
         return <DailyLog currentDate={currentDate} />;
     }
