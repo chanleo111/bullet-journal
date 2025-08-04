@@ -33,13 +33,11 @@ const Home = () => {
             <Container>
               <DateNavigator currentDate={currentDate} setCurrentDate={handleDateChange} />
               <DailyLog currentDate={currentDate} />
-            
             </Container>
           </>
         );
       case '每月誌':
         return (
-          
           <Container fluid>
             <Row>
               <Col xs={12} sm={6} md={4} className="month-navigator">
@@ -53,15 +51,16 @@ const Home = () => {
         );
       case '未來誌':
         return (
-          <PanelGroup direction="horizontal">
-            <Panel defaultSize={50} minSize={30}>
-              <FutureNavigator currentDate={currentDate} setCurrentDate={handleDateChange} />
-            </Panel>
-            <PanelResizeHandle />
-            <Panel defaultSize={50} minSize={20}>
-              <FutureLog currentDate={currentDate} />
-            </Panel>
-          </PanelGroup>
+          <Container fluid>
+            <Row>
+              <Col xs={12} sm={6} md={4} className="">
+                <FutureNavigator currentDate={currentDate} setCurrentDate={handleDateChange} />
+              </Col>
+              <Col xs={12} sm={6} md={4} className="">
+                <FutureLog currentDate={currentDate} />
+              </Col>
+            </Row>
+          </Container>
         );
       case '主題頁':
         return <CollectionLog />;
